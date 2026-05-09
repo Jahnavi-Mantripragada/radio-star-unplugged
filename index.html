@@ -13,28 +13,28 @@
         #toggle-btn, #start-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 1.1rem; }
         #start-btn { background: #1DB954; max-width: 300px; }
         #toggle-btn { background: #1DB954; margin-top: 20px; }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- STAGE 1: THE ENTRANCE -->
     <div id="overlay">
         <h1 style="color: #1DB954;">THE SINGER'S BOOTH</h1>
         <p style="margin-bottom: 30px; font-style: italic;">Year 9 | Dedicated to my favorite Radio Star</p>
         <button id="start-btn" onclick="startStudio()">ENTER STUDIO</button>
     </div>
 
-    <!-- STAGE 2: THE STUDIO -->
     <div id="studio" class="studio-content">
         <div class="video-container">
+            <!-- Muted video just for lyrics/visuals -->
             <iframe id="vidal" src="https://www.youtube.com/embed/XbAuO8hYoxo?enablejsapi=1&mute=1&controls=0&playlist=XbAuO8hYoxo&loop=1" frameborder="0"></iframe>
         </div>
 
-        <audio id="player"><source id="source" src="assets/instrumental.mp3" type="audio/mpeg"></audio>
+        <!-- The actual audio engine -->
+        <audio id="player" controls style="width:100%; filter:invert(100%);">
+            <source id="source" src="instrumental.mp3" type="audio/mpeg">
+        </audio>
         
         <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
-        <p style="color: #b3b3b3; margin-top: 20px; font-size: 0.9rem;">Vocals removed by your DJ. Use the button to switch modes.</p>
     </div>
 
     <script>
@@ -45,28 +45,31 @@
         let isInst = true;
 
         function startStudio() {
+            player.load(); 
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('studio').style.display = 'block';
-            document.body.style.overflow = 'auto';
-            document.body.style.height = 'auto';
 
-            // Start both at the same time
+            // Sync Start
             video.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
             player.play();
+
+            // Connect player pause to video pause
+            player.onpause = () => video.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            player.onplay = () => video.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         }
 
         function toggle() {
             const time = player.currentTime;
-            const paused = player.paused;
-            
             isInst = !isInst;
-            source.src = isInst ? "assets/instrumental.mp3" : "assets/original.mp3";
+            
+            // Files are in the same folder as index.html based on your image
+            source.src = isInst ? "instrumental.mp3" : "original.mp3";
             btn.innerHTML = isInst ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
             btn.style.background = isInst ? "#1DB954" : "#535353";
 
             player.load();
             player.currentTime = time;
-            if (!paused) player.play();
+            player.play();
         }
     </script>
 </body>
