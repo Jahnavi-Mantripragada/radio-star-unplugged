@@ -3,47 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Star | The US Sessions</title>
+    <title>Radio Star | Unplugged</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        body { background: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .studio-content { display: none; width: 100%; max-width: 500px; padding: 20px; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 20px; pointer-events: none; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        audio { width: 100%; filter: invert(100%); margin: 20px 0; }
-        #toggle-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; background: #1DB954; color: white; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3); }
-        .note { color: #b3b3b3; font-size: 0.9rem; margin-top: 20px; font-style: italic; }
+        #toggle-btn, #start-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 1.1rem; }
+        #start-btn { background: #1DB954; max-width: 300px; }
+        #toggle-btn { background: #1DB954; margin-top: 20px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <h2 style="margin-bottom: 5px;">THE SINGER'S BOOTH</h2>
-    <p style="color: #1DB954; margin-bottom: 20px; letter-spacing: 1px;">YEAR 9 | US SESSIONS</p>
-    
-    <div class="video-container">
-        <!-- This embeds your specific YouTube link, muted and looping -->
-        <iframe src="https://www.youtube.com/embed/XbAuO8hYoxo?autoplay=1&mute=1&playlist=XbAuO8hYoxo&loop=1" frameborder="0"></iframe>
+
+    <!-- STAGE 1: THE ENTRANCE -->
+    <div id="overlay">
+        <h1 style="color: #1DB954;">THE SINGER'S BOOTH</h1>
+        <p style="margin-bottom: 30px; font-style: italic;">Year 9 | Dedicated to my favorite Radio Star</p>
+        <button id="start-btn" onclick="startStudio()">ENTER STUDIO</button>
     </div>
 
-    <audio id="player" controls><source id="source" src="assets/instrumental.mp3" type="audio/mpeg"></audio>
-    
-    <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
+    <!-- STAGE 2: THE STUDIO -->
+    <div id="studio" class="studio-content">
+        <div class="video-container">
+            <iframe id="vidal" src="https://www.youtube.com/embed/XbAuO8hYoxo?enablejsapi=1&mute=1&controls=0&playlist=XbAuO8hYoxo&loop=1" frameborder="0"></iframe>
+        </div>
 
-    <p class="note">The video lyrics are synced to the track. Use the toggle to switch between listening and practice mode.</p>
+        <audio id="player"><source id="source" src="assets/instrumental.mp3" type="audio/mpeg"></audio>
+        
+        <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
+        <p style="color: #b3b3b3; margin-top: 20px; font-size: 0.9rem;">Vocals removed by your DJ. Use the button to switch modes.</p>
+    </div>
 
     <script>
+        const player = document.getElementById('player');
+        const source = document.getElementById('source');
+        const btn = document.getElementById('toggle-btn');
+        const video = document.getElementById('vidal').contentWindow;
         let isInst = true;
-        const p = document.getElementById('player');
-        const s = document.getElementById('source');
-        const b = document.getElementById('toggle-btn');
+
+        function startStudio() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('studio').style.display = 'block';
+            document.body.style.overflow = 'auto';
+            document.body.style.height = 'auto';
+
+            // Start both at the same time
+            video.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            player.play();
+        }
 
         function toggle() {
-            const time = p.currentTime;
-            const paused = p.paused;
-            s.src = isInst ? "assets/original.mp3" : "assets/instrumental.mp3";
-            b.innerHTML = isInst ? "🎧 MODE: LISTEN (ORIGINAL)" : "🎤 MODE: PRACTICE (INSTRUMENTAL)";
-            b.style.background = isInst ? "#535353" : "#1DB954";
-            p.load();
-            p.currentTime = time;
-            if (!paused) p.play();
+            const time = player.currentTime;
+            const paused = player.paused;
+            
             isInst = !isInst;
+            source.src = isInst ? "assets/instrumental.mp3" : "assets/original.mp3";
+            btn.innerHTML = isInst ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
+            btn.style.background = isInst ? "#1DB954" : "#535353";
+
+            player.load();
+            player.currentTime = time;
+            if (!paused) player.play();
         }
     </script>
 </body>
