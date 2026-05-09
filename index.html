@@ -8,6 +8,7 @@
         .container { max-width: 500px; margin: 0 auto; }
         video { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); background: black; }
         #toggle-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; background: #1DB954; color: white; font-size: 1.1rem; margin-top: 25px; cursor: pointer; }
+        .note { color: #b3b3b3; font-size: 0.8rem; margin-top: 15px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -16,11 +17,12 @@
         <p style="margin-bottom: 25px; opacity: 0.8;">Year 9 | US Sessions</p>
 
         <video id="player" controls playsinline>
-            <!-- Practice Link (Instrumental) -->
-            <source id="video-source" src="https://link-to-be-generated-by-drive-api-or-tool/1vfh7J-KebGA_RdDQPPs0-jUn7Hmu9oK4" type="video/mp4">
+            <!-- Starting with the Practice Link (Instrumental) -->
+            <source id="video-source" src="https://docs.google.com/uc?export=download&id=1vfh7J-KebGA_RdDQPPs0-jUn7Hmu9oK4" type="video/mp4">
         </video>
 
         <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
+        <p class="note">If video doesn't load instantly, give it a second to stream from the drive.</p>
     </div>
 
     <script>
@@ -29,7 +31,7 @@
         const b = document.getElementById('toggle-btn');
         let isPrac = true;
 
-        // Direct Stream Links
+        // Clean direct stream links
         const pracLink = "https://docs.google.com/uc?export=download&id=1vfh7J-KebGA_RdDQPPs0-jUn7Hmu9oK4";
         const origLink = "https://docs.google.com/uc?export=download&id=1BtBaUx6dGdbr2sSp9jFX1HJWrE_KinVw";
 
