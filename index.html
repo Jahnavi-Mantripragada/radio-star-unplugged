@@ -5,71 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Star | Unplugged</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .studio-content { display: none; width: 100%; max-width: 500px; padding: 20px; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 20px; pointer-events: none; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        #toggle-btn, #start-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 1.1rem; }
-        #start-btn { background: #1DB954; max-width: 300px; }
-        #toggle-btn { background: #1DB954; margin-top: 20px; }
+        body { background: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .studio-container { max-width: 600px; margin: 0 auto; }
+        video { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #toggle-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; background: #1DB954; color: white; font-size: 1.1rem; margin-top: 20px; }
+        .note { color: #b3b3b3; font-size: 0.9rem; margin-top: 20px; font-style: italic; }
     </style>
 </head>
 <body>
+    <div class="studio-container">
+        <h2 style="color: #1DB954;">THE SINGER'S BOOTH</h2>
+        <p style="margin-bottom: 20px;">Year 9 | US Sessions</p>
 
-    <div id="overlay">
-        <h1 style="color: #1DB954;">THE SINGER'S BOOTH</h1>
-        <p style="margin-bottom: 30px; font-style: italic;">Year 9 | Dedicated to my favorite Radio Star</p>
-        <button id="start-btn" onclick="startStudio()">ENTER STUDIO</button>
-    </div>
+        <!-- Single Video Player -->
+        <video id="booth-player" controls playsinline>
+            <source id="video-source" src="practice.mp4" type="video/mp4">
+        </video>
 
-    <div id="studio" class="studio-content">
-        <div class="video-container">
-            <!-- Muted video just for lyrics/visuals -->
-            <iframe id="vidal" src="https://www.youtube.com/embed/XbAuO8hYoxo?enablejsapi=1&mute=1&controls=0&playlist=XbAuO8hYoxo&loop=1" frameborder="0"></iframe>
-        </div>
-
-        <!-- The actual audio engine -->
-        <audio id="player" controls style="width:100%; filter:invert(100%);">
-            <source id="source" src="instrumental.mp3" type="audio/mpeg">
-        </audio>
+        <button id="toggle-btn" onclick="toggleMode()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
         
-        <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
+        <p class="note">Switch modes to hear the original vocals for reference.</p>
     </div>
 
     <script>
-        const player = document.getElementById('player');
-        const source = document.getElementById('source');
+        const video = document.getElementById('booth-player');
+        const source = document.getElementById('video-source');
         const btn = document.getElementById('toggle-btn');
-        const video = document.getElementById('vidal').contentWindow;
-        let isInst = true;
+        let isPractice = true;
 
-        function startStudio() {
-            player.load(); 
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('studio').style.display = 'block';
+        function toggleMode() {
+            const currentTime = video.currentTime;
+            const wasPaused = video.paused;
 
-            // Sync Start
-            video.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            player.play();
-
-            // Connect player pause to video pause
-            player.onpause = () => video.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            player.onplay = () => video.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-        }
-
-        function toggle() {
-            const time = player.currentTime;
-            isInst = !isInst;
+            isPractice = !isPractice;
+            source.src = isPractice ? "practice.mp4" : "original.mp4";
             
-            // Files are in the same folder as index.html based on your image
-            source.src = isInst ? "instrumental.mp3" : "original.mp3";
-            btn.innerHTML = isInst ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
-            btn.style.background = isInst ? "#1DB954" : "#535353";
+            btn.innerHTML = isPractice ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
+            btn.style.background = isPractice ? "#1DB954" : "#535353";
 
-            player.load();
-            player.currentTime = time;
-            player.play();
+            video.load();
+            video.currentTime = currentTime;
+            if (!wasPaused) video.play();
         }
     </script>
 </body>
