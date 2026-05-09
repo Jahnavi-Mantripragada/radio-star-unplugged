@@ -1,51 +1,50 @@
 <!DOCTYPE html>
-<html lang="te">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Star | Unplugged</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .studio-container { max-width: 600px; margin: 0 auto; }
-        video { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #toggle-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; background: #1DB954; color: white; font-size: 1.1rem; margin-top: 20px; }
-        .note { color: #b3b3b3; font-size: 0.9rem; margin-top: 20px; font-style: italic; }
+        body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
+        .container { max-width: 500px; margin: 0 auto; }
+        video { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); background: black; }
+        #toggle-btn { width: 100%; padding: 20px; border-radius: 50px; border: none; font-weight: bold; background: #1DB954; color: white; font-size: 1.1rem; margin-top: 25px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="studio-container">
+    <div class="container">
         <h2 style="color: #1DB954;">THE SINGER'S BOOTH</h2>
-        <p style="margin-bottom: 20px;">Year 9 | US Sessions</p>
+        <p style="margin-bottom: 25px; opacity: 0.8;">Year 9 | US Sessions</p>
 
-        <!-- Single Video Player -->
-        <video id="booth-player" controls playsinline>
-            <source id="video-source" src="practice.mp4" type="video/mp4">
+        <video id="player" controls playsinline>
+            <!-- Practice Link (Instrumental) -->
+            <source id="video-source" src="https://link-to-be-generated-by-drive-api-or-tool/1vfh7J-KebGA_RdDQPPs0-jUn7Hmu9oK4" type="video/mp4">
         </video>
 
-        <button id="toggle-btn" onclick="toggleMode()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
-        
-        <p class="note">Switch modes to hear the original vocals for reference.</p>
+        <button id="toggle-btn" onclick="toggle()">🎤 MODE: PRACTICE (INSTRUMENTAL)</button>
     </div>
 
     <script>
-        const video = document.getElementById('booth-player');
-        const source = document.getElementById('video-source');
-        const btn = document.getElementById('toggle-btn');
-        let isPractice = true;
+        const v = document.getElementById('player');
+        const s = document.getElementById('video-source');
+        const b = document.getElementById('toggle-btn');
+        let isPrac = true;
 
-        function toggleMode() {
-            const currentTime = video.currentTime;
-            const wasPaused = video.paused;
+        // Direct Stream Links
+        const pracLink = "https://docs.google.com/uc?export=download&id=1vfh7J-KebGA_RdDQPPs0-jUn7Hmu9oK4";
+        const origLink = "https://docs.google.com/uc?export=download&id=1BtBaUx6dGdbr2sSp9jFX1HJWrE_KinVw";
 
-            isPractice = !isPractice;
-            source.src = isPractice ? "practice.mp4" : "original.mp4";
+        function toggle() {
+            const t = v.currentTime;
+            const p = v.paused;
+            isPrac = !isPrac;
             
-            btn.innerHTML = isPractice ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
-            btn.style.background = isPractice ? "#1DB954" : "#535353";
-
-            video.load();
-            video.currentTime = currentTime;
-            if (!wasPaused) video.play();
+            s.src = isPrac ? pracLink : origLink;
+            b.innerHTML = isPrac ? "🎤 MODE: PRACTICE (INSTRUMENTAL)" : "🎧 MODE: LISTEN (ORIGINAL)";
+            b.style.background = isPrac ? "#1DB954" : "#535353";
+            
+            v.load();
+            v.currentTime = t;
+            if (!p) v.play();
         }
     </script>
 </body>
